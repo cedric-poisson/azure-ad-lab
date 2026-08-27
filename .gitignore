@@ -11,6 +11,7 @@ crash.*.log
 # Ansible
 *.retry
 ansible/inventory/hosts
+ansible/inventory/hosts.ini
 *.pem
 *.ppk
 
