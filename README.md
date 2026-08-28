@@ -1,3 +1,8 @@
+<p align="center">
+  <a href="README.md">🇫🇷 Français</a> •
+  <a href="README.en.md">🇬🇧 English</a>
+</p>
+
 # Azure AD Lab — Déploiement IaC d'une infrastructure Active Directory
 
 Projet personnel de démonstration : provisioning et configuration entièrement automatisés d'une infrastructure Active Directory sur Azure, avec **OpenTofu** (infra) et **Ansible** (configuration).
