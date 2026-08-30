@@ -57,6 +57,29 @@ ansible/
 - 2 group policies (USB restriction, screen lock), linked to their respective OUs
 - A Windows 11 workstation joined to the domain, with DNS pointing to the domain controller
 
+## Prerequisites to deploy this lab
+
+This repo is public but deliberately incomplete: secrets and environment-specific configuration (Azure credentials, AD passwords) are never versioned. To deploy this lab from a clone, you need to recreate locally:
+
+**On the Terraform side** — a `terraform/terraform.tfvars` file (not provided), with at least:
+```hcl
+admin_username = "azureadmin"
+admin_password = "..."
+my_ip           = "x.x.x.x/32"
+```
+
+**On the Ansible side** — an inventory file `ansible/inventory/hosts.ini` and a vault password (freely chosen when creating the project's first vaulted file):
+```bash
+cd ansible/
+ansible-vault create group_vars/dc/vault.yml
+# then define: ad_safe_mode_password: "..."
+```
+The same vault password unlocks every `group_vars/*/vault.yml` file in the repo — only one to remember, supplied via `--ask-vault-pass` or `--vault-password-file` when running the playbook.
+
+**Azure authentication** — this project assumes a service principal is already configured (environment variables `ARM_CLIENT_ID`, `ARM_CLIENT_SECRET`, `ARM_SUBSCRIPTION_ID`, `ARM_TENANT_ID`), not versioned for the same reasons.
+
+Without these, `tofu apply` and `ansible-playbook site.yml` will fail cleanly by requesting the missing values — this is the expected behavior.
+
 ## Notes
 
 - No explicit AD functional level was set at forest creation (defaults to `Windows2016Domain`) — no impact for this lab, but worth fixing if the infra were recreated.

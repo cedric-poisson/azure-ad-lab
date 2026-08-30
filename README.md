@@ -57,6 +57,29 @@ ansible/
 - 2 stratégies de groupe (restriction USB, verrouillage d'écran), liées aux OU correspondantes
 - Un poste Windows 11 joint au domaine, avec DNS pointant vers le contrôleur de domaine
 
+## Prérequis pour déployer ce lab
+
+Ce repo est public mais volontairement incomplet : les secrets et la configuration propre à un environnement (credentials Azure, mots de passe AD) ne sont jamais versionnés. Pour déployer ce lab depuis un clone, il faut recréer localement :
+
+**Côté Terraform** — un fichier `terraform/terraform.tfvars` (non fourni), avec au minimum :
+```hcl
+admin_username = "azureadmin"
+admin_password = "..."
+my_ip           = "x.x.x.x/32"
+```
+
+**Côté Ansible** — un inventaire `ansible/inventory/hosts.ini` et un mot de passe de vault (choisi librement à la création du premier fichier vaulté du projet) :
+```bash
+cd ansible/
+ansible-vault create group_vars/dc/vault.yml
+# puis y définir : ad_safe_mode_password: "..."
+```
+Le même mot de passe de vault déverrouille tous les fichiers `group_vars/*/vault.yml` du repo — un seul à retenir, à fournir via `--ask-vault-pass` ou `--vault-password-file` au lancement du playbook.
+
+**Authentification Azure** — ce projet suppose un service principal déjà configuré (variables d'environnement `ARM_CLIENT_ID`, `ARM_CLIENT_SECRET`, `ARM_SUBSCRIPTION_ID`, `ARM_TENANT_ID`), non versionné pour les mêmes raisons.
+
+Sans ces éléments, `tofu apply` et `ansible-playbook site.yml` échoueront proprement en demandant les valeurs manquantes — c'est le comportement attendu.
+
 ## Notes
 
 - Pas de niveau fonctionnel AD explicite défini à la création de la forêt (reste au défaut `Windows2016Domain`) — sans impact pour ce lab, mais à corriger si l'infra était recréée.
